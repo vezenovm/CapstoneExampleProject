@@ -41,12 +41,13 @@ contract("ExampleToken", accounts => {
     let accountTwoEndingBalance;
 
     let accountOneStartingEthBalance;
-    let accountTwoStartingEthBalance;
+    //let accountTwoStartingEthBalance;
     let accountOneEndingEthBalance;
-    let accountTwoEndingEthBalance;
+    //let accountTwoEndingEthBalance;
 
     let startingRate;
     let endingRate;
+    let endingSupply;
 
     const amount = 10;
 
@@ -85,6 +86,10 @@ contract("ExampleToken", accounts => {
       })
       .then(function(ethBalance) {
         accountOneEndingEthBalance = ethBalance;
+        return meta.totalSupply.call();
+      })
+      .then(function(supply) {
+        endingSupply = supply;
         return meta.rate.call();
       })
       .then(function(rate) {
@@ -100,6 +105,12 @@ contract("ExampleToken", accounts => {
           accountOneEndingEthBalance,
           accountTwoStartingEthBalance + web3.utils.toWei("3", "ether"),
           "Correct amount of ether was transferred to the contract owner"
+        );
+
+        assert.equal(
+          endingRate,
+          startingRate * endingSupply,
+          "The new exchange rate for the token is correctly reflected"
         );
       });
   });
